@@ -31,7 +31,7 @@ start(_Type, _Args) ->
     ]}
   ],
   cowboy:start_http(http, 10, [{port, get_env_or_default(http_port, ?DEFAULT_PORT)}], [{dispatch, Dispatch}]),
-  textgames_server_sup:start_link(PlayerModule).
+  textgames_player_sup:start_link(PlayerModule).
 
 
 stop(_State) ->

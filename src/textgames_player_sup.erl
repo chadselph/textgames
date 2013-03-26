@@ -55,7 +55,7 @@ start_child(Players) ->
 %%                     {error, Reason}
 %% @end
 %%--------------------------------------------------------------------
-init([PlayerModule]) ->
+init(PlayerModule) ->
     RestartStrategy = simple_one_for_one,
     MaxRestarts = 1000,
     MaxSecondsBetweenRestarts = 3600,

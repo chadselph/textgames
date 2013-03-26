@@ -30,12 +30,12 @@ string_param(Key, PostData, Filter) ->
   end.
 
 do_move(Req, PlayerModule, PlayerRef, Move) ->
-  GPid = case textgames_store:get_game(PlayerRef) of
+  GPid = case textgames_store:get_player(PlayerRef) of
     {ok, Pid} ->
       Pid;
     {error, nogame} ->
       {ok, Pid} = textgames_player_sup:start_child([PlayerRef]),
-      textgames_store:add_game([PlayerRef], Pid, undefined),
+      textgames_store:add_player([PlayerRef], Pid, undefined),
       Pid
   end,
   % XXX: make this a cast?
