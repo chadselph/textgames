@@ -1,0 +1,13 @@
+{application, textgames_server, [
+    {description, "Framework for text-based games."},
+        {vsn, "0.0.1"},
+        {modules, []},
+        {registered, [textgames_server]},
+        {applications, [
+            kernel,
+            stdlib,
+            xmerl,
+            cowboy
+                ]},
+        {mod, {textgames_server, []}}
+    ]}.
