@@ -19,6 +19,7 @@ start(_Type, _Args) ->
   Dispatch = [
     {'_', [
       {[<<"twiml">>, <<"sms">>], textgames_sms_handler, PlayerModule},
+      {[<<"ws">>], textgames_ws_handler, PlayerModule},
       {[], cowboy_static, [
         {directory, "priv/static/"},
         {file, <<"index.html">>},

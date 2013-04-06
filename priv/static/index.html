@@ -1,1 +1,43 @@
-Test
+<head>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <style type="text/css">
+        #content .user {
+            background: #eeffee;
+            min-height: 14px;
+        }
+        #content .repsponse {
+
+        }
+    </style>
+</head>
+<script>
+    $(function () {
+        $("form").submit(function (_evt) {
+            var text = $(this).children("input").val();
+            $(this).children("input").val("");
+            ws.send(text);
+            appendMessage(text, "user");
+            return false;
+        });
+    });
+    function appendMessage(text, style) {
+        $("#content").append(
+            $("<div>" + text + "</div>").attr("class", style)
+        );
+    }
+    var protocol = ((window.location.protocol == "https") ? "wss" : "ws") + "://";
+    var url = protocol + window.location.host + "/ws";
+    var ws = new WebSocket(url);
+    ws.onmessage = function (msg) {
+        appendMessage(msg.data, "response");
+    }
+</script>
+<body>
+    <h1>Websocket Test Interface</h1>
+    <div id="content"></div>
+    <hr />
+    <form>
+        <input type="text">
+    </form>
+
+</body>
