@@ -1,5 +1,6 @@
 <head>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="/reconnecting-websocket.min.js"></script>
     <style type="text/css">
         #content .user {
             background: #eeffee;
@@ -7,6 +8,9 @@
         }
         #content .repsponse {
 
+        }
+        body {
+            font-size: 24pt;
         }
     </style>
 </head>
@@ -27,7 +31,7 @@
     }
     var protocol = ((window.location.protocol == "https") ? "wss" : "ws") + "://";
     var url = protocol + window.location.host + "/ws";
-    var ws = new WebSocket(url);
+    var ws = new ReconnectingWebSocket(url);
     ws.onmessage = function (msg) {
         appendMessage(msg.data, "response");
     }
