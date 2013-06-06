@@ -15,14 +15,17 @@ init({tcp, http}, _Req, _Opts) ->
 
 websocket_init(_TransportName, Req, PlayerModule) ->
   Player = {websocket, self()},
+  {ok, Pid} = textgames_player_sup:start_child([Player]),
   %% I suppose I don't really need to use textgame_store here.
   %% maybe if I had a cookie or something for disconnected users
-  {ok, Pid} = textgames_player_sup:start_child([Player]),
-  textgames_store:add_player([Player], Pid, undefined),
+  %textgames_store:add_player([Player], Pid, undefined),
   {ok, Req, #state{player_ref=Player, player_pid=Pid, module=PlayerModule}}.
 
 websocket_handle({text, Msg}, Req, State=#state{module=Mod, player_pid=Pid}) ->
-  Resp = Mod:make_move(Pid, Msg),
+  Resp = case Mod:make_move(Pid, Msg) of
+    X when is_binary(X) -> X;
+    X when is_list(X) -> unicode:characters_to_binary(X, unicode, utf8)
+  end,
   {reply, {text, Resp}, Req, State};
 websocket_handle(_Data, Req, State) ->
   {ok, Req, State}.
@@ -32,6 +35,7 @@ websocket_info({timeout, _Ref, Msg}, Req, State) ->
 websocket_info(_Info, Req, State) ->
   {ok, Req, State}.
 
-websocket_terminate(_Reason, _Req, _State) ->
+websocket_terminate(_Reason, _Req, #state{player_ref=Ref}) ->
+  %textgames_score:delete_player(Ref),
   ok.
 
