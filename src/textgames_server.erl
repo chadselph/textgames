@@ -14,6 +14,7 @@ start() ->
   application:start(textgames_server).
 
 start(_Type, _Args) ->
+  Static = code:priv_dir(textgames) ++ "/static/",
   PlayerModule = get_env_or_default(player_module, undefined),
   textgames_store:init(),
   Dispatch = [
@@ -21,12 +22,12 @@ start(_Type, _Args) ->
       {[<<"twiml">>, <<"sms">>], textgames_sms_handler, PlayerModule},
       {[<<"ws">>], textgames_ws_handler, PlayerModule},
       {[], cowboy_static, [
-        {directory, "priv/static/"},
+        {directory, Static},
         {file, <<"index.html">>},
         {mimetypes, {fun mimetypes:path_to_mimes/2, default}}
       ]},
       {['...'], cowboy_static, [
-        {directory, "priv/static/"},
+        {directory, Static},
         {mimetypes, {fun mimetypes:path_to_mimes/2, default}}
       ]}
     ]}

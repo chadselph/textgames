@@ -22,20 +22,22 @@ websocket_init(_TransportName, Req, PlayerModule) ->
   {ok, Req, #state{player_ref=Player, player_pid=Pid, module=PlayerModule}}.
 
 websocket_handle({text, Msg}, Req, State=#state{module=Mod, player_pid=Pid}) ->
-  Resp = case Mod:make_move(Pid, Msg) of
-    X when is_binary(X) -> X;
-    X when is_list(X) -> unicode:characters_to_binary(X, unicode, utf8)
-  end,
-  {reply, {text, Resp}, Req, State};
+  case Mod:make_move(Pid, Msg) of
+    ok -> {ok, Req, State};
+    X when is_binary(X) -> {repy, {text, X}, Req, State};
+    X when is_list(X) ->
+      Reply = unicode:characters_to_binary(X, unicode, utf8),
+      {reply, {text, Reply}, Req, State}
+  end;
 websocket_handle(_Data, Req, State) ->
   {ok, Req, State}.
 
 websocket_info({timeout, _Ref, Msg}, Req, State) ->
   {reply, {text, Msg}, Req, State};
-websocket_info(_Info, Req, State) ->
-  {ok, Req, State}.
+websocket_info(Sent, Req, State) ->
+  {reply, {text, Sent}, Req, State}.
 
-websocket_terminate(_Reason, _Req, #state{player_ref=Ref}) ->
+websocket_terminate(_Reason, _Req, #state{player_ref=_Ref}) ->
   %textgames_score:delete_player(Ref),
   ok.
 

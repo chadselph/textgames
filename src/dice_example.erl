@@ -16,6 +16,9 @@ make_move(_Pid, MoveStr) ->
   {Style, Count, Size} = read_input(binary_to_list(MoveStr)),
   print_roll(Style, roll_dice(Count, Size), 2).
 
+
+%% Private functions
+
 roll_dice(HowMany, Sides) ->
   [random:uniform(Sides) || _ <- lists:seq(1, HowMany)].
 
